@@ -11,10 +11,12 @@ import { UsersList } from "../components/userslist";
 
 
 
-export const ChatBar = () => {
+export const ChatBar = (props) => {
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+
+    const { socket, local_user } = props;
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -50,7 +52,7 @@ export const ChatBar = () => {
                 </Toolbar>
             </AppBar>
 
-            <UsersList open={open} hide={handleDrawerClose} />
+            <UsersList local_user={local_user.user} socket={socket} open={open} hide={handleDrawerClose} />
 
         </>
 

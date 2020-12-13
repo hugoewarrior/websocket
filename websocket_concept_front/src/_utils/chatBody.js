@@ -8,29 +8,35 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { Typography } from "@material-ui/core";
 
 
-
-const test = "hdjkdfhkjdfhkjdhfkjhkfhd"
-
 export const ChatBody = (props) => {
 
     const classes = useStyles();
     const [local_messages, setLocalMss] = useState([]);
 
-    const { mss } = props
+    const { mss, local_user } = props
 
 
     useEffect(() => {
-        console.log(mss, "from chat")
-        show_new_message(mss);
+        console.log(mss, local_user, "from chat")
+        if (mss) show_new_message(mss.message);
     }, [mss])
 
+    useEffect(() => {
+        scroll_down();
+    }, [local_messages])
 
     const show_new_message = (newMessage) => {
-        console.log(local_messages, "HE")
+        console.log(newMessage, "HE")
         let old_messages = [...local_messages];
         old_messages.push(newMessage);
-        let actual_messages = Object.assign(old_messages, []);
+        let actual_messages = old_messages;
         setLocalMss(() => actual_messages);
+    }
+
+
+    const scroll_down = () => {
+        var objDiv = document.getElementById("test");
+        objDiv.scrollTop = objDiv.scrollHeight;
     }
 
 
@@ -38,7 +44,7 @@ export const ChatBody = (props) => {
         < ListItem key={key}>
             <ListItemAvatar>
                 <Avatar>
-                    {test.substring(0, 1).toUpperCase()}
+                    {user.substring(0, 1).toUpperCase()}
                 </Avatar>
             </ListItemAvatar>
             <ListItemText secondary={message} />
@@ -47,11 +53,11 @@ export const ChatBody = (props) => {
 
 
     const my_messages = (message, user, key) => (
-        < ListItem >
+        < ListItem key={key}>
             <ListItemText style={{ textAlign: 'right', marginRight: 10 }} secondary={message} />
             <ListItemAvatar>
                 <Avatar>
-                    {test.substring(0, 1).toUpperCase()}
+                    {user.substring(0, 1).toUpperCase()}
                 </Avatar>
             </ListItemAvatar>
         </ListItem >
@@ -62,9 +68,9 @@ export const ChatBody = (props) => {
 
     return (
 
-        <List className={classes.root}>
-            { local_messages.length > 1 ? local_messages.map((row, key) =>
-                 row == null ? my_messages() : others_messages(row, " ", key)
+        <List className={classes.root} id="test">
+            { local_messages.length > 0 ? local_messages.map((row, key) =>
+                row.user == local_user.user ? my_messages(row.message, row.user, key) : others_messages(row.message, row.user, key)
 
             )
                 : <Typography>No messages yet</Typography>}
@@ -78,8 +84,7 @@ const useStyles = makeStyles((theme) =>
         root: {
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: 'green',
-            overflowY: 'scroll'
+            overflowY: 'auto'
         },
 
     }),

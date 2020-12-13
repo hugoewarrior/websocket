@@ -17,20 +17,30 @@ const io = socketIo(server); // < Interesting!
  */
 
 io.on("connection", (socket) => {
-    console.log("New user is connected"); 
+    socket.on("disconnect", () => {
+        console.log("User is disconnected");
+    });
 
 
-socket.on("disconnect", ()=>{
-    console.log("User is disconnected"); 
-}); 
+    /**
+     * On user enter room
+     */
+    socket.on("user", (user) => {
+        console.log(user + " just got here")
+        io.emit("user", user)
+    })
 
 
-/**
- * Chat event
- */
-socket.on("chat",(message)=>{
-    io.emit("chat", message); 
-})
+
+    /**
+     * Chat event
+     */
+    socket.on("chat", (message, user) => {
+        let resp = {
+            message, user
+        }
+        io.emit("chat", resp);
+    })
 
 
 });

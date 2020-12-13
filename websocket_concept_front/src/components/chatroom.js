@@ -7,15 +7,17 @@ import { MessageInput } from '../_utils/messageInput';
 import { ChatBody } from '../_utils/chatBody';
 
 import { ENDPOINT } from './_consts';
+import { Redirect } from "react-router-dom";
 
 
 const socket = socketIOClient(ENDPOINT);
 
 
-export const ChatRoom = () => {
+export const ChatRoom = (props) => {
 
     const classes = useStyles();
     const [messages, setMessages] = useState(null);
+    const local_user = props.location.state;
 
     useEffect(() => {
         listen_for_websocket();
@@ -38,11 +40,12 @@ export const ChatRoom = () => {
 
     const submit_chat = (message) => {
         console.log("sending chat")
-        socket.emit("chat", message);
+        socket.emit("chat", { message, user: local_user.user });
     }
 
+    if (!local_user) return <Redirect to="/" />
 
-    return (
+    else return (
         <Slide in={true} direction="left">
 
 
@@ -50,18 +53,11 @@ export const ChatRoom = () => {
 
                 <Grid item xs={12} sm={12} xl={8} md={8} lg={8}>
                     <div className={classes.chat_layout}>
-                        <ChatBar />
-                        <ChatBody mss={messages} />
+                        <ChatBar socket={socket} local_user={local_user} />
+                        <ChatBody mss={messages} local_user={local_user} />
                         <MessageInput submit_chat={submit_chat} />
                     </div>
                 </Grid>
-
-
-
-
-
-
-
             </Grid>
 
         </Slide>

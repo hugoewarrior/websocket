@@ -12,7 +12,7 @@ export const MessageInput = (props) => {
     const classes = useStyles();
     const [message, setMessage] = useState("");
 
-    const { submit_chat } = props; 
+    const { submit_chat } = props;
 
 
     const onTyping = (e) => {

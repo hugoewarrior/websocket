@@ -12,8 +12,19 @@ const socket = socketIOClient(ENDPOINT);
 export const UserGreeting = () => {
 
   const classes = useStyles();
-  const [cuponNumber, setCuponNumber] = useState();
+  const [cuponNumber, setCuponNumber] = useState("");
   const history = useHistory();
+
+
+  const enter_chatroom=()=>{
+    history.push({
+      pathname: "/chatroom", 
+      state: {user: cuponNumber}
+    })
+    socket.emit("user", cuponNumber); 
+  }
+
+
 
   return (
     <Slide in={true} direction="left">
@@ -59,7 +70,7 @@ export const UserGreeting = () => {
                   className={classes.button}
                   variant="contained"
                   color="primary"
-                  onClick={() => history.push("/chatroom")}
+                  onClick={()=>enter_chatroom()}
                   >
                   Entrar a la sala
                   </Button>

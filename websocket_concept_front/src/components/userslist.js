@@ -14,19 +14,33 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import Drawer from '@material-ui/core/Drawer';
 
-import { ENDPOINT } from './_consts';
 const drawerWidth = 250;
-
-const test = "hdjkdfhkjdfhkjdhfkjhkfhd"
-
-
-
 
 export const UsersList = (props) => {
 
     const classes = useStyles();
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+
+    const { socket, local_user } = props;
+    const [update_users, setUsers] = useState([]);
+
+    useEffect(() => {
+        console.log("creating listener")
+        listen_for_websocket();
+    }, [])
+
+
+    const listen_for_websocket = () => {
+
+        socket.on("user", (response) => {
+            let old_users = [...update_users];
+            old_users.push(response);
+            let actual_users = old_users;
+            setUsers(actual_users)
+
+        })
+    }
+
 
     return (
         <Drawer
@@ -46,19 +60,21 @@ export const UsersList = (props) => {
             <Divider />
 
             <List className={classes.root}>
-                <ListItem>
-                    <ListItemAvatar>
-                        <Avatar>
-                            {test.substring(0,1).toUpperCase()}
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={
-                        test.length > 20 ? test.substring(0,18) + "..." : test
-                    } secondary="Online" />
-                </ListItem>
+                {update_users.map((row, key) =>
+                    < ListItem key={key} >
+                        <ListItemAvatar>
+                            <Avatar>
+                                {row.substring(0, 1).toUpperCase()}
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={
+                            row.length > 20 ? row.substring(0, 18) + "..." : row
+                        } secondary="Online" />
+                    </ListItem>
+                )}
             </List>
 
-        </Drawer>
+        </Drawer >
 
 
     );
